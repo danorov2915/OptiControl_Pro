@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0F1D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="OptiControl PRO - Sistema integral para ópticas en celular: control de pacientes, refracciones OD/OI, gabinete clínico, órdenes de laboratorio, corte de caja e inventario.">
+  
+  <title>OptiControl PRO | Control Integral de Ópticas</title>
+
+  <!-- Favicon e Iconos PWA -->
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Tipografías Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Estilos Principales -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app-viewport">
+    
+    <!-- HEADER SUPERIOR MÓVIL -->
+    <header class="app-header">
+      <div class="brand-wrapper">
+        <div class="brand-icon" id="headerBrandIcon" style="background: transparent; box-shadow: none;">
+          <img src="icon-192.png" alt="OptiControl PRO" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0, 180, 216, 0.4));">
+        </div>
+        <div class="brand-info">
+          <h1 id="headerBrandName">Óptica Visión Clara</h1>
+          <p>OptiControl PRO • Gestión & Refracción</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Badge de Licencia: Demo o PRO -->
+        <button id="headerLicenseBadge" class="license-pill demo" title="Información de Licencia">
+          Demo: 0/10
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      
+      <!-- Banner de Demostración dinámico -->
+      <div id="demoBannerContainer"></div>
+
+      <!-- ====================================================================
+           VISTA 1: INICIO / DASHBOARD
+           ==================================================================== -->
+      <section id="view-inicio" class="view-section active">
+        <!-- Hero de Bienvenida -->
+        <div class="welcome-hero">
+          <div class="hero-greeting">Panel de Control</div>
+          <div class="hero-title">Resumen de Hoy</div>
+
+          <div class="quick-stats-grid">
+            <div class="stat-card blue" onclick="switchTab('pacientes')">
+              <div class="stat-icon-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <div class="stat-val" id="dashTotalPacientes">0</div>
+              <div class="stat-lbl">Pacientes Registrados</div>
+            </div>
+
+            <div class="stat-card green" onclick="switchTab('ordenes')">
+              <div class="stat-icon-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+              </div>
+              <div class="stat-val" id="dashOrdenesActivas">0</div>
+              <div class="stat-lbl">Órdenes en Proceso</div>
+            </div>
+
+            <div class="stat-card amber" onclick="switchTab('ordenes')">
+              <div class="stat-icon-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
+                  <path d="M12 18V6"/>
+                </svg>
+              </div>
+              <div class="stat-val" id="dashSaldoCobrar">$0</div>
+              <div class="stat-lbl">Por Cobrar (Saldos)</div>
+            </div>
+
+            <div class="stat-card purple">
+              <div class="stat-icon-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23"/>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <div class="stat-val" id="dashTotalVentas">$0</div>
+              <div class="stat-lbl">Ventas Totales</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accesos Rápidos -->
+        <div class="section-header">
+          <span class="section-title">⚡ Acciones Rápidas</span>
+        </div>
+        <div class="quick-actions-row">
+          <div class="quick-btn" onclick="promptNewPatient()">
+            <div class="quick-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+            </div>
+            <span>+ Paciente</span>
+          </div>
+
+          <div class="quick-btn" onclick="promptNewOrder()">
+            <div class="quick-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                <line x1="12" y1="11" x2="12" y2="17"/>
+                <line x1="9" y1="14" x2="15" y2="14"/>
+              </svg>
+            </div>
+            <span>+ Nueva Orden</span>
+          </div>
+
+          <div class="quick-btn" onclick="switchTab('caja')">
+            <div class="quick-btn-icon" style="color: var(--success); background: rgba(16, 185, 129, 0.15);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+            </div>
+            <span>💵 Corte Caja</span>
+          </div>
+
+          <div class="quick-btn" onclick="switchTab('pacientes'); setPatientCRMFilter('anual');">
+            <div class="quick-btn-icon" style="color: var(--gold); background: rgba(245, 158, 11, 0.15);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </div>
+            <span>🔔 Campañas</span>
+          </div>
+
+          <div class="quick-btn" onclick="openBarcodeScanner('searchPatientsInput')">
+            <div class="quick-btn-icon" style="color: var(--accent-cyan); background: rgba(0, 180, 216, 0.15);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            </div>
+            <span>📷 Escanear</span>
+          </div>
+        </div>
+
+        <!-- Trabajos Urgentes / Listos -->
+        <div class="section-header">
+          <span class="section-title">👓 Trabajos en Laboratorio y Listos</span>
+          <span class="section-link" onclick="switchTab('ordenes')">Ver todos</span>
+        </div>
+        <div id="dashUrgentOrdersList"></div>
+
+        <!-- Citas Programadas -->
+        <div class="section-header">
+          <span class="section-title">📅 Próximas Citas</span>
+          <span class="section-link" onclick="switchTab('citas')">Ver agenda</span>
+        </div>
+        <div id="dashAppointmentsList"></div>
+      </section>
+
+      <!-- ====================================================================
+           VISTA 2: PACIENTES Y GRADUACIONES
+           ==================================================================== -->
+      <section id="view-pacientes" class="view-section">
+        <div class="search-bar-wrapper input-with-action">
+          <span class="search-icon-fixed">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <input 
+            type="text" 
+            id="searchPatientsInput" 
+            class="search-input" 
+            placeholder="Buscar por nombre, teléfono o folio..."
+            autocomplete="off"
+          >
+          <button type="button" class="input-action-icon-btn" title="Escanear Código / Folio con Cámara" onclick="openBarcodeScanner('searchPatientsInput')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Filtros CRM y Campañas de Salud Visual -->
+        <div class="filter-chips" style="margin-bottom: 12px; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px;">
+          <button class="chip-btn patient-crm-chip active" data-crm="todos" onclick="setPatientCRMFilter('todos')">Todos</button>
+          <button class="chip-btn patient-crm-chip" data-crm="anual" onclick="setPatientCRMFilter('anual')">🔔 Revisión Anual</button>
+          <button class="chip-btn patient-crm-chip" data-crm="contacto" onclick="setPatientCRMFilter('contacto')">👁️ Lentes de Contacto</button>
+          <button class="chip-btn patient-crm-chip" data-crm="sinrecoger" onclick="setPatientCRMFilter('sinrecoger')">⏳ Listos sin Recoger</button>
+        </div>
+
+        <div id="crmCampaignBannerContainer"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);" id="patientListTitle">Directorio de Pacientes</span>
+          <button class="btn-primary" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 10px;" onclick="promptNewPatient()">
+            + Nuevo Paciente
+          </button>
+        </div>
+
+        <div id="patientsListContainer"></div>
+      </section>
+
+      <!-- ====================================================================
+           VISTA 3: ÓRDENES Y TRABAJOS DE LABORATORIO
+           ==================================================================== -->
+      <section id="view-ordenes" class="view-section">
+        <div class="filter-chips">
+          <button class="chip-btn order-filter-chip active" data-filter="todos">Todos</button>
+          <button class="chip-btn order-filter-chip" data-filter="taller">En Laboratorio</button>
+          <button class="chip-btn order-filter-chip" data-filter="listo">Listos para Entrega</button>
+          <button class="chip-btn order-filter-chip" data-filter="entregado">Entregados</button>
+          <button class="chip-btn order-filter-chip" data-filter="pendiente">Cotizaciones</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">Órdenes de Trabajo</span>
+          <button class="btn-primary" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 10px;" onclick="promptNewOrder()">
+            + Nueva Orden
+          </button>
+        </div>
+
+        <div id="ordersListContainer"></div>
+      </section>
+
+      <!-- ====================================================================
+           VISTA 4: CAJA, ARQUEO Y FINANZAS
+           ==================================================================== -->
+      <section id="view-caja" class="view-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase;">Control Financiero</div>
+            <h2 style="font-family: var(--font-heading); font-size: 1.25rem; color: #fff;">Corte de Caja Diario</h2>
+          </div>
+          <input type="date" id="cajaFechaFiltro" class="form-control" style="width: auto; padding: 6px 10px; font-size: 0.8rem;" onchange="renderCajaView()">
+        </div>
+
+        <!-- Tarjetas de Estadísticas de Caja -->
+        <div class="caja-stats-grid">
+          <div class="caja-hero-card">
+            <div class="caja-hero-info">
+              <div class="caja-hero-label">Efectivo Esperado en Caja</div>
+              <div class="caja-hero-val" id="cajaEfectivoEsperado">$0.00</div>
+              <div class="caja-hero-sub" id="cajaFondoSubtext">Fondo inicial: $500.00</div>
+            </div>
+            <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; color: var(--success);">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <line x1="2" y1="10" x2="22" y2="10"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="caja-substat-card">
+            <span class="caja-substat-label">Total Cobrado Hoy</span>
+            <span class="caja-substat-val green" id="cajaTotalCobrado">$0.00</span>
+          </div>
+
+          <div class="caja-substat-card">
+            <span class="caja-substat-label">Cobros en Efectivo</span>
+            <span class="caja-substat-val" id="cajaCobrosEfectivo">$0.00</span>
+          </div>
+
+          <div class="caja-substat-card">
+            <span class="caja-substat-label">Tarjetas (Terminal)</span>
+            <span class="caja-substat-val blue" id="cajaCobrosTarjeta">$0.00</span>
+          </div>
+
+          <div class="caja-substat-card">
+            <span class="caja-substat-label">Transferencias</span>
+            <span class="caja-substat-val purple" id="cajaCobrosTransfer">$0.00</span>
+          </div>
+
+          <div class="caja-substat-card">
+            <span class="caja-substat-label">Gastos / Salidas</span>
+            <span class="caja-substat-val danger" id="cajaTotalGastos">$0.00</span>
+          </div>
+
+          <div class="caja-substat-card">
+            <span class="caja-substat-label">Ganancia Bruta Órdenes</span>
+            <span class="caja-substat-val gold" id="cajaGananciaBruta">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Botones de Acción de Caja -->
+        <div class="caja-actions-bar">
+          <button class="btn-primary" style="flex: 1; padding: 12px; font-size: 0.82rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="openAddExpenseModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Registrar Gasto
+          </button>
+          <button class="btn-secondary" style="flex: 1.2; padding: 12px; font-size: 0.82rem; border-radius: 12px; background: rgba(37, 211, 102, 0.15); border-color: rgba(37, 211, 102, 0.4); color: #25D366; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="sendDailyCashCutWhatsApp()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+            </svg>
+            Corte x WhatsApp
+          </button>
+        </div>
+
+        <!-- Subtabs de Caja -->
+        <div class="caja-tabs-nav">
+          <button class="caja-tab-btn active" data-subtab="movimientos" onclick="switchCajaSubtab('movimientos')">Movimientos de Hoy</button>
+          <button class="caja-tab-btn" data-subtab="comisiones" onclick="switchCajaSubtab('comisiones')">Ventas por Asesor</button>
+          <button class="caja-tab-btn" data-subtab="proveedores" onclick="switchCajaSubtab('proveedores')">Cuentas x Pagar Lab</button>
+          <button class="caja-tab-btn" data-subtab="historial" onclick="switchCajaSubtab('historial')">Historial de Cortes</button>
+        </div>
+
+        <!-- Contenedores de Subtabs -->
+        <div id="cajaSubtabMovimientos" class="caja-subtab-pane">
+          <div style="font-weight: 700; color: #fff; font-size: 0.85rem; margin-bottom: 8px;">Cobros Registrados Hoy</div>
+          <div id="cajaCobrosHoyList" style="margin-bottom: 16px;"></div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 700; color: #fff; font-size: 0.85rem;">Gastos y Salidas de Caja</span>
+            <button class="btn-text" style="font-size: 0.75rem; color: var(--primary); background: none; border: none; cursor: pointer;" onclick="openAddExpenseModal()">+ Agregar gasto</button>
+          </div>
+          <div id="cajaGastosHoyList"></div>
+        </div>
+
+        <div id="cajaSubtabComisiones" class="caja-subtab-pane" style="display: none;">
+          <div id="cajaComisionesContainer"></div>
+        </div>
+
+        <div id="cajaSubtabProveedores" class="caja-subtab-pane" style="display: none;">
+          <div id="cajaProveedoresContainer"></div>
+        </div>
+
+        <div id="cajaSubtabHistorial" class="caja-subtab-pane" style="display: none;">
+          <div id="cajaHistorialContainer"></div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           VISTA 4: AGENDA DE CITAS
+           ==================================================================== -->
+      <section id="view-citas" class="view-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span style="font-size: 0.9rem; font-weight: 700; color: #fff;">Agenda de Consultas y Entregas</span>
+          <button class="btn-primary" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 10px;" onclick="promptNewAppointment()">
+            + Agendar Cita
+          </button>
+        </div>
+
+        <div id="appointmentsListContainer"></div>
+      </section>
+
+      <!-- ====================================================================
+           VISTA 6: INVENTARIO DE ARMAZONES
+           ==================================================================== -->
+      <section id="view-inventario" class="view-section">
+        <div class="search-bar-wrapper input-with-action" style="margin-bottom: 12px;">
+          <span class="search-icon-fixed">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <input 
+            type="text" 
+            id="searchInventoryInput" 
+            class="search-input" 
+            placeholder="Buscar por código, marca o modelo..."
+            oninput="renderInventoryList()"
+            autocomplete="off"
+          >
+          <button type="button" class="input-action-icon-btn" title="Escanear Código de Barras / SKU" onclick="openBarcodeScanner('searchInventoryInput')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span style="font-size: 0.9rem; font-weight: 700; color: #fff;">Catálogo & Existencias</span>
+          <button class="btn-primary" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 10px;" onclick="promptNewInventoryItem()">
+            + Agregar Artículo
+          </button>
+        </div>
+
+        <div id="inventoryListContainer"></div>
+      </section>
+
+      <!-- ====================================================================
+           VISTA 6: AJUSTES, LICENCIA Y RESPALDOS
+           ==================================================================== -->
+      <section id="view-ajustes" class="view-section">
+        <div class="section-header" style="margin-top: 0;">
+          <span class="section-title">⚙️ Datos de la Óptica</span>
+        </div>
+
+        <form id="settingsForm" onsubmit="saveSettingsFromForm(event)">
+          <div class="form-group">
+            <label for="cfgNombre">Nombre Comercial de la Óptica:</label>
+            <input type="text" id="cfgNombre" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgEslogan">Eslogan o Subtítulo:</label>
+            <input type="text" id="cfgEslogan" class="form-control">
+          </div>
+
+          <!-- Logotipo de la Óptica (Opcional) -->
+          <div class="form-group">
+            <label>Logotipo de la Óptica (Opcional):</label>
+            <div style="display: flex; align-items: center; gap: 14px; margin-top: 6px;">
+              <div id="cfgLogoPreviewWrapper" style="width: 58px; height: 58px; border-radius: 14px; border: 1.5px dashed var(--border-color); background: rgba(255, 255, 255, 0.04); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                <span id="cfgLogoEmptyPlaceholder" style="font-size: 0.72rem; color: var(--text-tertiary); text-align: center; padding: 4px;">Sin logo</span>
+                <img id="cfgLogoImg" src="" alt="Logo" style="display: none; width: 100%; height: 100%; object-fit: contain; padding: 4px;">
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+                <label class="btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; cursor: pointer; text-align: center; width: fit-content; display: inline-flex; align-items: center; gap: 6px;">
+                  📁 Subir Imagen
+                  <input type="file" id="cfgLogoInput" accept="image/*" style="display: none;" onchange="handleLogoUpload(this)">
+                </label>
+                <button type="button" id="cfgRemoveLogoBtn" style="font-size: 0.75rem; color: var(--danger); background: none; border: none; cursor: pointer; text-align: left; padding: 0; display: none;" onclick="removeLogo()">
+                  ✕ Quitar logotipo
+                </button>
+              </div>
+            </div>
+            <p style="font-size: 0.72rem; color: var(--text-tertiary); margin-top: 4px;">
+              PNG o JPG. Se mostrará en el encabezado de la app y en los recibos impresos.
+            </p>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cfgTelefono">Teléfono / WhatsApp:</label>
+              <input type="text" id="cfgTelefono" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="cfgDiasEntrega">Días promesa de entrega:</label>
+              <input type="number" id="cfgDiasEntrega" class="form-control" min="1" max="30">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgDireccion">Dirección / Sucursal:</label>
+            <input type="text" id="cfgDireccion" class="form-control">
+          </div>
+
+          <!-- Datos del Optometrista Responsable -->
+          <div style="margin-top: 18px; margin-bottom: 12px; font-weight: 700; color: var(--accent-cyan); font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            <span>Optometrista Responsable</span>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgOptometrista">Nombre Completo del Optometrista:</label>
+            <input type="text" id="cfgOptometrista" class="form-control" placeholder="Ej: Lic. Opt. Alejandro Ramos V.">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cfgCedula">Cédula Profesional:</label>
+              <input type="text" id="cfgCedula" class="form-control" placeholder="Ej: 12345678">
+            </div>
+            <div class="form-group">
+              <label for="cfgEspecialidad">Especialidad / Universidad:</label>
+              <input type="text" id="cfgEspecialidad" class="form-control" placeholder="Ej: Contactología y Salud Visual">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgMensajeTicket">Mensaje / Términos al Pie del Ticket:</label>
+            <textarea id="cfgMensajeTicket" class="form-control" rows="2"></textarea>
+          </div>
+
+          <!-- Parámetros de Personal, Comisiones y Caja -->
+          <div style="margin-top: 18px; margin-bottom: 12px; font-weight: 700; color: var(--accent-cyan); font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>Personal, Comisiones y Corte</span>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgAsesores">Asesores / Vendedores (Separados por coma):</label>
+            <input type="text" id="cfgAsesores" class="form-control" placeholder="Ej: Laura Morales, Carlos Gómez, Alejandro Ramos">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cfgComision">Comisión de Venta (%):</label>
+              <input type="number" id="cfgComision" class="form-control" placeholder="3" min="0" max="100" step="0.5">
+            </div>
+            <div class="form-group">
+              <label for="cfgFondoCaja">Fondo Inicial de Caja ($):</label>
+              <input type="number" id="cfgFondoCaja" class="form-control" placeholder="500" min="0" step="any">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cfgTelefonoDuenio">WhatsApp del Dueño (Para recibir Corte Diario):</label>
+            <input type="tel" id="cfgTelefonoDuenio" class="form-control" placeholder="Ej: 5512345678">
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; margin-bottom: 24px;">
+            Guardar Configuración
+          </button>
+        </form>
+
+        <!-- Estado de Licencia Demo / PRO -->
+        <div class="section-header">
+          <span class="section-title">🔑 Estado de Licencia</span>
+        </div>
+        <div id="cfgLicenseStatusBox" style="margin-bottom: 24px;"></div>
+
+        <!-- Copia de Seguridad JSON -->
+        <div class="section-header">
+          <span class="section-title">💾 Respaldo de Datos (GitHub Pages)</span>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 14px; border: 1px solid var(--border-color);">
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">
+            Tus datos se guardan en el celular. Puedes descargar una copia de seguridad o transferir tu información a otro dispositivo.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button type="button" class="btn-secondary" onclick="exportBackupJSON()" style="font-size: 0.8rem; padding: 10px;">
+              ⬇️ Descargar Copia
+            </button>
+            <label class="btn-secondary" style="font-size: 0.8rem; padding: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              ⬆️ Restaurar Copia
+              <input type="file" accept=".json" style="display: none;" onchange="importBackupJSON(this)">
+            </label>
+          </div>
+        </div>
+
+        <!-- Sello de Marca OptiControl PRO -->
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 25px; padding: 20px; background: rgba(255, 255, 255, 0.02); border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.06);">
+          <img src="opticontrol_pro_logo.png" alt="OptiControl PRO" style="max-width: 210px; width: 80%; height: auto; margin-bottom: 8px; filter: drop-shadow(0 4px 16px rgba(0, 180, 216, 0.3));">
+          <div style="font-size: 0.78rem; color: var(--text-tertiary); font-weight: 500;">
+            Sistema Integral para la Salud Visual • PWA Móvil
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- BOTÓN FLOTANTE (FAB) ACCIÓN RÁPIDA -->
+    <button class="fab-btn" title="Nuevo Paciente" onclick="promptNewPatient()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+    </button>
+
+    <!-- BARRA DE NAVEGACIÓN INFERIOR (BOTTOM NAV) -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="inicio" onclick="switchTab('inicio')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Inicio</span>
+      </button>
+
+      <button class="nav-item" data-tab="pacientes" onclick="switchTab('pacientes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <span>Pacientes</span>
+      </button>
+
+      <button class="nav-item" data-tab="ordenes" onclick="switchTab('ordenes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+        <span>Órdenes</span>
+      </button>
+
+      <button class="nav-item" data-tab="caja" onclick="switchTab('caja')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <line x1="2" y1="10" x2="22" y2="10"/>
+        </svg>
+        <span>Caja</span>
+      </button>
+
+      <button class="nav-item" data-tab="citas" onclick="switchTab('citas')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>Citas</span>
+      </button>
+
+      <button class="nav-item" data-tab="inventario" onclick="switchTab('inventario')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+          <line x1="12" y1="22.08" x2="12" y2="12"/>
+        </svg>
+        <span>Inventario</span>
+      </button>
+
+      <button class="nav-item" data-tab="ajustes" onclick="switchTab('ajustes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Ajustes</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ====================================================================
+       MODAL 1: NUEVO / EDITAR PACIENTE Y GRADUACIÓN OD / OI
+       ==================================================================== -->
+  <div id="modalPaciente" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title" id="patientFormTitle">Ficha de Paciente & Graduación</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalPaciente')">✕</button>
+      </div>
+
+      <form id="patientForm" onsubmit="savePatientFromForm(event)">
+        <div class="modal-body">
+          
+          <!-- Datos Personales -->
+          <div class="form-group">
+            <label for="pNombre">Nombre Completo del Paciente *</label>
+            <input type="text" id="pNombre" class="form-control" placeholder="Ej: Juan Pérez Morales" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pTelefono">Teléfono / WhatsApp</label>
+              <input type="tel" id="pTelefono" class="form-control" placeholder="Ej: 5512345678">
+            </div>
+            <div class="form-group">
+              <label for="pEdad">Edad</label>
+              <input type="number" id="pEdad" class="form-control" placeholder="Ej: 32">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pOcupacion">Ocupación / Actividad</label>
+            <input type="text" id="pOcupacion" class="form-control" placeholder="Ej: Conductor, Diseñador...">
+          </div>
+
+          <div class="form-group">
+            <label for="pAntecedentes">Antecedentes Médicos / Oculares</label>
+            <input type="text" id="pAntecedentes" class="form-control" placeholder="Ej: Diabetes, fatiga visual...">
+          </div>
+
+          <!-- TABLA CLÍNICA DE GRADUACIÓN (OD y OI) -->
+          <div class="rx-clinical-box">
+            <div class="rx-header-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="12" r="3"/>
+                <line x1="9" y1="12" x2="15" y2="12"/>
+              </svg>
+              Examen de la Vista (Refracción)
+            </div>
+
+            <div class="rx-grid">
+              <div></div>
+              <div class="rx-cell-header">ESF</div>
+              <div class="rx-cell-header">CIL</div>
+              <div class="rx-cell-header">EJE</div>
+              <div class="rx-cell-header">ADD</div>
+              <div class="rx-cell-header">DP (mm)</div>
+            </div>
+
+            <!-- OJO DERECHO (OD) -->
+            <div class="rx-grid">
+              <div class="rx-eye-badge od">OD</div>
+              <input type="text" id="rxOdEsf" class="rx-input" placeholder="-2.00">
+              <input type="text" id="rxOdCil" class="rx-input" placeholder="-0.50">
+              <input type="number" id="rxOdEje" class="rx-input" placeholder="90" min="0" max="180">
+              <input type="text" id="rxOdAdd" class="rx-input" placeholder="+1.50">
+              <input type="text" id="rxOdDp" class="rx-input" placeholder="31.5">
+            </div>
+
+            <!-- OJO IZQUIERDO (OI) -->
+            <div class="rx-grid">
+              <div class="rx-eye-badge oi">OI</div>
+              <input type="text" id="rxOiEsf" class="rx-input" placeholder="-2.25">
+              <input type="text" id="rxOiCil" class="rx-input" placeholder="-0.75">
+              <input type="number" id="rxOiEje" class="rx-input" placeholder="85" min="0" max="180">
+              <input type="text" id="rxOiAdd" class="rx-input" placeholder="+1.50">
+              <input type="text" id="rxOiDp" class="rx-input" placeholder="31.5">
+            </div>
+
+            <!-- Agudeza Visual Opcional -->
+            <div class="form-row" style="margin-top: 10px; margin-bottom: 0;">
+              <div>
+                <label style="font-size: 0.72rem; color: var(--text-tertiary);">AV Ojo Derecho (OD):</label>
+                <input type="text" id="rxOdAv" class="rx-input" value="20/20" style="text-align: left; padding: 6px 10px;">
+              </div>
+              <div>
+                <label style="font-size: 0.72rem; color: var(--text-tertiary);">AV Ojo Izquierdo (OI):</label>
+                <input type="text" id="rxOiAv" class="rx-input" value="20/20" style="text-align: left; padding: 6px 10px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Selección de Lentes y Armazón -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rxTipoMica">Tipo de Lente / Mica:</label>
+              <select id="rxTipoMica" class="form-control">
+                <option value="Monofocal">Monofocal</option>
+                <option value="Bifocal Flat-Top">Bifocal Flat-Top</option>
+                <option value="Bifocal Invisible">Bifocal Invisible</option>
+                <option value="Progresivo Básico">Progresivo Básico</option>
+                <option value="Progresivo Digital HD">Progresivo Digital HD</option>
+                <option value="Progresivo Premium">Progresivo Premium</option>
+                <option value="Lectura / Descanso">Lectura / Descanso</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="rxMaterial">Material:</label>
+              <select id="rxMaterial" class="form-control">
+                <option value="Policarbonato">Policarbonato (Airwear)</option>
+                <option value="CR-39 (Plástico)">CR-39 (Plástico)</option>
+                <option value="Hi-Index 1.67">Hi-Index 1.67 (Delgado)</option>
+                <option value="Hi-Index 1.74">Hi-Index 1.74 (Ultra)</option>
+                <option value="Trivex">Trivex (Alto Impacto)</option>
+                <option value="Cristal Mineral">Cristal Mineral</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tratamientos -->
+          <div class="form-group">
+            <label>Tratamientos y Filtros:</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem;">
+              <label style="display: flex; align-items: center; gap: 6px; color: #fff;">
+                <input type="checkbox" class="treatment-cb" value="Antirreflejante"> Antirreflejante Verde
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; color: #fff;">
+                <input type="checkbox" class="treatment-cb" value="Filtro Azul (Blue Defense)"> Filtro Luz Azul
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; color: #fff;">
+                <input type="checkbox" class="treatment-cb" value="Fotocromático (Transitions)"> Fotocromático (Transitions)
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; color: #fff;">
+                <input type="checkbox" class="treatment-cb" value="Tinte Solar Polarizado"> Polarizado Solar
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rxArmazon">Armazón Seleccionado:</label>
+            <div style="margin-bottom: 6px;">
+              <select id="rxArmazonSelect" class="form-control" style="font-size: 0.82rem;" onchange="handlePatientArmazonSelectChange()">
+                <option value="">-- Seleccionar del Inventario (Opcional) --</option>
+              </select>
+            </div>
+            <input type="text" id="rxArmazon" class="form-control" placeholder="Marca, Modelo, Color o Propio del cliente">
+            <span style="font-size: 0.72rem; color: var(--text-tertiary); margin-top: 3px; display: block;">
+              Elige un modelo del inventario o escribe el armazón propio del paciente.
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="rxObservaciones">Diagnóstico y Recomendaciones:</label>
+            <textarea id="rxObservaciones" class="form-control" placeholder="Observaciones para el paciente o el laboratorio..."></textarea>
+          </div>
+
+          <!-- GABINETE CLÍNICO EXTENDIDO (ACORDEÓN) -->
+          <div class="cabinet-toggle-btn" onclick="toggleCabinetDrawer()">
+            <span>🔬 Gabinete Clínico Extendido (Opcional)</span>
+            <span id="cabinetToggleIcon">▼</span>
+          </div>
+
+          <div id="cabinetDrawer" class="cabinet-drawer">
+            <!-- Queratometría K1 / K2 -->
+            <div style="font-weight: 700; color: var(--accent-cyan); font-size: 0.8rem; margin-bottom: 6px;">
+              Queratometría / Contactología (Dioptrías)
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label style="font-size: 0.72rem;">OD - K1 / K2 / Eje:</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+                  <input type="text" id="pK1_OD" class="form-control" placeholder="42.50" style="padding: 6px; font-size: 0.8rem;">
+                  <input type="text" id="pK2_OD" class="form-control" placeholder="43.25" style="padding: 6px; font-size: 0.8rem;">
+                  <input type="text" id="pEjeK_OD" class="form-control" placeholder="180°" style="padding: 6px; font-size: 0.8rem;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label style="font-size: 0.72rem;">OI - K1 / K2 / Eje:</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+                  <input type="text" id="pK1_OI" class="form-control" placeholder="42.75" style="padding: 6px; font-size: 0.8rem;">
+                  <input type="text" id="pK2_OI" class="form-control" placeholder="43.50" style="padding: 6px; font-size: 0.8rem;">
+                  <input type="text" id="pEjeK_OI" class="form-control" placeholder="175°" style="padding: 6px; font-size: 0.8rem;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Presión Intraocular (PIO) y AV Sin Corrección -->
+            <div class="form-row">
+              <div class="form-group">
+                <label style="font-size: 0.72rem;">Presión Intraocular PIO (mmHg):</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                  <input type="text" id="pPio_OD" class="form-control" placeholder="OD: 15" style="padding: 6px; font-size: 0.8rem;">
+                  <input type="text" id="pPio_OI" class="form-control" placeholder="OI: 16" style="padding: 6px; font-size: 0.8rem;">
+                </div>
+              </div>
+              <div class="form-group">
+                <label style="font-size: 0.72rem;">AV Sin Corrección (SC):</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                  <input type="text" id="pAvSc_OD" class="form-control" placeholder="OD: 20/100" style="padding: 6px; font-size: 0.8rem;">
+                  <input type="text" id="pAvSc_OI" class="form-control" placeholder="OI: 20/150" style="padding: 6px; font-size: 0.8rem;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Síntomas y Motivo de Consulta -->
+            <div class="form-group">
+              <label style="font-size: 0.72rem;">Síntomas & Motivo de Consulta:</label>
+              <div class="symptom-chips-grid">
+                <label class="symptom-chip-label">
+                  <input type="checkbox" class="symptom-cb" value="Fatiga por pantallas">
+                  <span>📱 Fatiga x pantallas</span>
+                </label>
+                <label class="symptom-chip-label">
+                  <input type="checkbox" class="symptom-cb" value="Cefaleas frecuentes">
+                  <span>🤕 Cefaleas / Dolor</span>
+                </label>
+                <label class="symptom-chip-label">
+                  <input type="checkbox" class="symptom-cb" value="Visión borrosa lejos">
+                  <span>🌫️ Borrosa de lejos</span>
+                </label>
+                <label class="symptom-chip-label">
+                  <input type="checkbox" class="symptom-cb" value="Dificultad de cerca">
+                  <span>📖 Lectura / Cerca</span>
+                </label>
+                <label class="symptom-chip-label">
+                  <input type="checkbox" class="symptom-cb" value="Fotofobia">
+                  <span>☀️ Molestia a la luz</span>
+                </label>
+                <label class="symptom-chip-label">
+                  <input type="checkbox" class="symptom-cb" value="Ojo seco / ardor">
+                  <span>💧 Ojo seco / ardor</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Adaptación de Lentes de Contacto -->
+            <div class="form-row" style="margin-bottom: 0;">
+              <div class="form-group">
+                <label style="font-size: 0.72rem;">¿Usa Lentes de Contacto?</label>
+                <select id="pEsLenteContacto" class="form-control" style="font-size: 0.8rem; padding: 6px 10px;">
+                  <option value="No">No</option>
+                  <option value="Blandos Esféricos">Sí - Blandos Esféricos</option>
+                  <option value="Blandos Tóricos">Sí - Blandos Tóricos</option>
+                  <option value="Multifocales">Sí - Multifocales</option>
+                  <option value="Gas Permeable (RGP)">Sí - Gas Permeable</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="font-size: 0.72rem;">Próximo Reemplazo LC:</label>
+                <input type="date" id="pFechaReemplazoLC" class="form-control" style="font-size: 0.8rem; padding: 6px 10px;">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPaciente')">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Paciente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 2: NUEVA / EDITAR ORDEN DE TRABAJO
+       ==================================================================== -->
+  <div id="modalOrden" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Orden de Trabajo & Laboratorio</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalOrden')">✕</button>
+      </div>
+
+      <form id="orderForm" onsubmit="saveOrderFromForm(event)">
+        <div class="modal-body">
+          
+          <div class="form-group">
+            <label for="ordPatientSelect">Paciente Asociado *</label>
+            <select id="ordPatientSelect" class="form-control" onchange="handlePatientSelectChange()" required>
+              <option value="">-- Selecciona --</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ordFolio">Folio de Orden:</label>
+              <input type="text" id="ordFolio" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+              <label for="ordEstatus">Estatus Actual:</label>
+              <select id="ordEstatus" class="form-control">
+                <option value="taller">En Laboratorio / Taller</option>
+                <option value="listo">Listo para Entrega</option>
+                <option value="entregado">Entregado y Liquidado</option>
+                <option value="pendiente">Pendiente / Cotización</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ordFechaPedido">Fecha de Pedido:</label>
+              <input type="date" id="ordFechaPedido" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="ordFechaPrometida">Fecha de Entrega:</label>
+              <input type="date" id="ordFechaPrometida" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ordLaboratorio">Laboratorio Asignado:</label>
+              <input type="text" id="ordLaboratorio" class="form-control" placeholder="Ej: Essilor, Augen, Lab Central...">
+            </div>
+            <div class="form-group">
+              <label for="ordAsesor">Vendedor / Asesor:</label>
+              <select id="ordAsesor" class="form-control">
+                <!-- Se llena dinámicamente con los asesores configurados -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="ordArmazonSelect">👓 Armazón del Inventario (Descuenta 1 unidad de Stock):</label>
+            <select id="ordArmazonSelect" class="form-control" onchange="handleOrderArmazonSelectChange()">
+              <option value="">-- Sin armazón / Armazón propio del cliente --</option>
+            </select>
+            <div id="ordArmazonStockInfo" style="font-size: 0.75rem; color: var(--accent-cyan); margin-top: 4px; display: none;"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="ordDescripcion">Especificaciones del Trabajo:</label>
+            <textarea id="ordDescripcion" class="form-control" placeholder="Detalle de micas, biselado, tratamientos..." required></textarea>
+          </div>
+
+          <!-- Finanzas y Cobranza -->
+          <div style="background: rgba(11, 19, 43, 0.8); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 14px; margin-top: 10px;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: var(--accent-cyan); margin-bottom: 10px;">
+              💰 Cobranza, Costos y Margen Real
+            </div>
+
+            <div class="form-row" style="margin-bottom: 8px;">
+              <div class="form-group">
+                <label for="ordTotal">Precio al Cliente ($) *</label>
+                <input type="number" id="ordTotal" class="form-control" placeholder="0" min="0" step="any" oninput="calculateOrderBalance()" required>
+              </div>
+              <div class="form-group">
+                <label for="ordAnticipo">Anticipo Dejado ($):</label>
+                <input type="number" id="ordAnticipo" class="form-control" placeholder="0" min="0" step="any" oninput="calculateOrderBalance()">
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-bottom: 8px;">
+              <div class="form-group">
+                <label for="ordAnticipoMetodo">Método de Anticipo:</label>
+                <select id="ordAnticipoMetodo" class="form-control">
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Tarjeta">Tarjeta (Terminal)</option>
+                  <option value="Transferencia">Transferencia</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="ordCostoLab">Costo Maquila Lab ($):</label>
+                <input type="number" id="ordCostoLab" class="form-control" placeholder="0" min="0" step="any" oninput="calculateOrderBalance()">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label for="ordCostoArmazon">Costo del Armazón ($):</label>
+              <input type="number" id="ordCostoArmazon" class="form-control" placeholder="0" min="0" step="any" oninput="calculateOrderBalance()">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px dashed rgba(255, 255, 255, 0.1);">
+              <span style="font-weight: 600; color: #fff;">Saldo Restante por Pagar:</span>
+              <span id="ordSaldoCalc" style="font-family: monospace; font-size: 1.15rem; font-weight: 800; color: var(--warning);">$0</span>
+            </div>
+
+            <div class="margin-indicator" id="ordMargenIndicator">
+              <span>Ganancia Bruta Estimada:</span>
+              <span id="ordGananciaCalc">$0.00 (0%)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalOrden')">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Orden</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 3: REGISTRAR ABONO
+       ==================================================================== -->
+  <div id="modalAbono" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Registrar Abono / Pago</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalAbono')">✕</button>
+      </div>
+
+      <form onsubmit="saveAbonoFromModal(event)">
+        <div class="modal-body">
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 0.8rem; color: var(--text-tertiary);">Orden:</div>
+            <div id="abonoOrderFolio" style="font-size: 1rem; font-weight: 700; color: #fff;"></div>
+          </div>
+
+          <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <span style="font-size: 0.85rem; color: #fff;">Saldo Pendiente Actual:</span>
+            <span id="abonoSaldoActual" style="font-family: monospace; font-size: 1.25rem; font-weight: 800; color: var(--gold);">$0</span>
+          </div>
+
+          <div class="form-group">
+            <label for="abonoMontoInput">Monto del Abono ($) *</label>
+            <input type="number" id="abonoMontoInput" class="form-control" style="font-size: 1.25rem; font-weight: 800;" min="1" step="any" required>
+          </div>
+
+          <div class="form-group">
+            <label for="abonoMetodoSelect">Método de Pago:</label>
+            <select id="abonoMetodoSelect" class="form-control">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Tarjeta de Débito/Crédito">Tarjeta de Débito/Crédito</option>
+              <option value="Transferencia SPEI">Transferencia SPEI</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalAbono')">Cancelar</button>
+          <button type="submit" class="btn-primary">Confirmar Pago</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 4: TICKET / RECIBO IMPRIMIBLE
+       ==================================================================== -->
+  <div id="modalTicket" class="modal-overlay">
+    <div class="modal-sheet" style="max-height: 94vh;">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Ticket & Recibo Oficial</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalTicket')">✕</button>
+      </div>
+
+      <div class="modal-body" id="ticketModalBody">
+        <!-- Renderizado dinámicamente -->
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="executeTicketPrint()">
+          🖨️ Imprimir
+        </button>
+        <button type="button" class="btn-primary" onclick="shareTicketWhatsApp()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+          </svg>
+          Enviar x WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 5: AGENDAR CITA
+       ==================================================================== -->
+  <div id="modalCita" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Agendar Cita</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalCita')">✕</button>
+      </div>
+
+      <form onsubmit="saveAppointmentFromForm(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="aptPatientName">Nombre del Paciente *</label>
+            <input type="text" id="aptPatientName" class="form-control" placeholder="Nombre completo" required>
+          </div>
+
+          <div class="form-group">
+            <label for="aptTelefono">Teléfono / WhatsApp:</label>
+            <input type="tel" id="aptTelefono" class="form-control" placeholder="10 dígitos">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="aptFecha">Fecha:</label>
+              <input type="date" id="aptFecha" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="aptHora">Hora:</label>
+              <input type="time" id="aptHora" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="aptMotivo">Motivo de la Cita:</label>
+            <input type="text" id="aptMotivo" class="form-control" value="Examen de la vista y graduación">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalCita')">Cancelar</button>
+          <button type="submit" class="btn-primary">Agendar Cita</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 6: AGREGAR A INVENTARIO
+       ==================================================================== -->
+  <div id="modalInventario" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Agregar Artículo al Inventario</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalInventario')">✕</button>
+      </div>
+
+      <form onsubmit="saveInventoryFromForm(event)">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="invCodigo">Código / SKU *</label>
+              <div class="input-with-action">
+                <input type="text" id="invCodigo" class="form-control" placeholder="Ej: RB-5154" required>
+                <button type="button" class="input-action-icon-btn" title="Escanear Código con Cámara" onclick="openBarcodeScanner('invCodigo')">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="invTipo">Tipo de Producto:</label>
+              <select id="invTipo" class="form-control">
+                <option value="Armazón">Armazón Oftálmico</option>
+                <option value="Solar">Lentes de Sol</option>
+                <option value="Lente de Contacto">Lentes de Contacto</option>
+                <option value="Accesorio">Accesorio / Solución</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="invMarca">Marca *</label>
+              <input type="text" id="invMarca" class="form-control" placeholder="Ej: Ray-Ban, Oakley..." required>
+            </div>
+            <div class="form-group">
+              <label for="invModelo">Modelo:</label>
+              <input type="text" id="invModelo" class="form-control" placeholder="Ej: Clubmaster">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="invColor">Color / Acabado:</label>
+            <input type="text" id="invColor" class="form-control" placeholder="Ej: Negro Mate">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="invCosto">Costo Proveedor ($):</label>
+              <input type="number" id="invCosto" class="form-control" placeholder="0" min="0" step="any">
+            </div>
+            <div class="form-group">
+              <label for="invPrecio">Precio de Venta ($) *</label>
+              <input type="number" id="invPrecio" class="form-control" placeholder="0" min="0" step="any" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="invStock">Cantidad en Existencia:</label>
+            <input type="number" id="invStock" class="form-control" value="1" min="0">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalInventario')">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar en Inventario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 7: LÍMITE DEMO ALCANZADO & ACTIVACIÓN PRO
+       ==================================================================== -->
+  <div id="modalDemoLimit" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Activación de Licencia PRO</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalDemoLimit')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="demo-limit-box">
+          <div class="demo-limit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3 class="demo-limit-title">Versión Demo (Máximo 10 Clientes)</h3>
+          <p class="demo-limit-desc">
+            Para continuar capturando pacientes y tener órdenes ilimitadas en tu celular, ingresa tu clave de activación oficial.
+          </p>
+
+          <div class="install-id-box">
+            <div class="install-id-label">Tu ID de Instalación Único:</div>
+            <div class="install-id-val" id="demoModalInstallId">OPT-XXXX-XXXX</div>
+          </div>
+
+          <div class="form-group" style="text-align: left;">
+            <label for="licenseKeyInput">Ingresa tu Clave de Activación PRO:</label>
+            <input 
+              type="text" 
+              id="licenseKeyInput" 
+              class="form-control" 
+              placeholder="OPT-XXXX-XXXX-XXXX o clave maestra"
+              autocomplete="off"
+              spellcheck="false"
+              style="font-family: monospace; text-transform: uppercase; letter-spacing: 1.5px; text-align: center; font-size: 1.1rem; font-weight: 700;"
+            >
+          </div>
+
+          <button type="button" class="btn-primary" style="width: 100%;" onclick="handleActivateFromModal()">
+            ✨ Activar Licencia Ilimitada
+          </button>
+
+          <div style="margin-top: 18px; font-size: 0.8rem; color: var(--text-tertiary);">
+            ¿Deseas desbloquear tu sistema sin límite de pacientes?
+            <br>
+            <span style="color: var(--accent-cyan); font-weight: 600; display: inline-block; margin-top: 4px;">
+              Proporciona tu ID de Instalación a tu distribuidor para recibir tu clave PRO.
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 8: INFORMACIÓN DE LICENCIA PRO ACTIVA
+       ==================================================================== -->
+  <div id="modalLicenciaInfo" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Licencia PRO</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalLicenciaInfo')">✕</button>
+      </div>
+
+      <div class="modal-body" style="text-align: center; padding: 24px 16px;">
+        <div style="width: 64px; height: 64px; border-radius: 20px; background: rgba(16, 185, 129, 0.15); color: var(--success); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 6px; color: #fff;">¡Licencia Completa Desbloqueada!</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px;">
+          Esta instalación cuenta con acceso ilimitado para captura de pacientes, recetas, órdenes y control de inventario.
+        </p>
+        <button class="btn-secondary" style="width: 100%;" onclick="closeModal('modalLicenciaInfo')">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: REGISTRAR GASTO / SALIDA DE CAJA
+       ==================================================================== -->
+  <div id="modalGasto" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">Registrar Gasto de Caja</h2>
+        <button class="modal-close-btn" onclick="closeModal('modalGasto')">✕</button>
+      </div>
+
+      <form onsubmit="saveExpenseFromForm(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="expConcepto">Concepto / Motivo de Salida *</label>
+            <input type="text" id="expConcepto" class="form-control" placeholder="Ej: Motomensajería lab, paños, agua..." required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expMonto">Monto en Efectivo ($) *</label>
+              <input type="number" id="expMonto" class="form-control" placeholder="0.00" min="0.01" step="any" required>
+            </div>
+            <div class="form-group">
+              <label for="expCategoria">Categoría:</label>
+              <select id="expCategoria" class="form-control">
+                <option value="Laboratorio / Taller">Laboratorio / Taller</option>
+                <option value="Insumos / Materiales">Insumos / Materiales</option>
+                <option value="Mensajería / Envíos">Mensajería / Envíos</option>
+                <option value="Servicios / Limpieza">Servicios / Limpieza</option>
+                <option value="Alimentos">Alimentos / Personal</option>
+                <option value="Otro">Otro Gasto</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalGasto')">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Gasto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL: ESCÁNER DE CÓDIGOS DE BARRAS / QR
+       ==================================================================== -->
+  <div id="modalScanner" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <h2 class="modal-title">📷 Escáner de Código / Folio</h2>
+        <button class="modal-close-btn" onclick="closeBarcodeScanner()">✕</button>
+      </div>
+
+      <div class="modal-body" style="text-align: center;">
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">
+          Apunta la cámara del celular al código de barras o QR de la etiqueta o ticket.
+        </p>
+
+        <div class="scanner-viewport">
+          <video id="scannerVideo" playsinline autoplay muted></video>
+          <div class="scanner-target-box">
+            <div class="scanner-laser-line"></div>
+          </div>
+        </div>
+
+        <div id="scannerFallbackInputWrapper" style="margin-top: 14px; display: none;">
+          <div class="form-group">
+            <label style="font-size: 0.78rem;">Ingresa el código manualmente:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="scannerManualInput" class="form-control" placeholder="Escribe el código o folio">
+              <button type="button" class="btn-primary" onclick="submitManualScannerCode()">Aplicar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scanner-controls-row">
+          <button type="button" class="btn-secondary" style="font-size: 0.78rem; padding: 8px 14px;" onclick="flipCamera()">
+            🔄 Cambiar Cámara
+          </button>
+          <button type="button" class="btn-secondary" style="font-size: 0.78rem; padding: 8px 14px;" onclick="toggleManualScannerInput()">
+            ⌨️ Escribir Código
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICACIÓN -->
+  <div id="appToast" class="toast-msg">Notificación</div>
+
+  <!-- SCRIPTS -->
+  <script src="license.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
